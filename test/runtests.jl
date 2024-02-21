@@ -13,6 +13,14 @@ using ADNLPModels
   T = eltype(x)
   noise = T(0.2)
 
+  
+  @testset "helper-function" begin
+    update_noise_level!(model, T(0.4))
+    @test model.noise_level == T(0.4)
+    update_noise_level!(model, T(0.1))
+    @test model.noise_level == T(0.1)
+  end
+  
   # Test the constructor
   @testset "RandomNoisyNLPModel constructor" begin
     @test model.base_model == base_model
@@ -61,4 +69,5 @@ using ADNLPModels
       @test g[i] == g_base[i] .+ noise
     end
   end
+
 end

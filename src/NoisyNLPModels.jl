@@ -1,6 +1,7 @@
 module NoisyNLPModels
 
 export RandomNoisyNLPModel
+export update_noise_level!
 using NLPModels
 import NLPModels.obj
 import NLPModels.grad!
@@ -64,14 +65,6 @@ function grad!(
   g
 end
 
-function grad(model::RandomNoisyNLPModel{T, S, M}, x::S) where {T, S <: (AbstractVector), M}
-  g = grad(model.base_model, x)
-  for i ∈ eachindex(g)
-    g[i] += model.noise_level * (rand(T) - 1 / 2)
-  end
-  g
-end
-
 function grad(
   model::RandomNoisyNLPModel{T, S, M},
   x::S,
@@ -82,6 +75,13 @@ function grad(
     g[i] += noise
   end
   g
+end
+
+function update_noise_level!(
+  model::RandomNoisyNLPModel{T, S, M},
+  noise_level::T,
+) where {T, S <: (AbstractVector), M}
+  model.noise_level = noise_level
 end
 
 end
