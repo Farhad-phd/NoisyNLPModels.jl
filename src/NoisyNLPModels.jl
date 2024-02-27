@@ -81,7 +81,7 @@ function update_noise_level!(
   model::RandomNoisyNLPModel{T, S, M},
   noise_level::T,
 ) where {T, S <: (AbstractVector), M}
-  model.noise_level = noise_level
+  model.noise_level = max(0,noise_level)
 end
 
 end
