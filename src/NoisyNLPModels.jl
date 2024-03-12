@@ -33,6 +33,12 @@ function obj(model::RandomNoisyNLPModel{T, S, M}, x::S) where {T, S <: (Abstract
   return obj(model.base_model, x) + model.noise_level * (rand(T) - 1 / 2)
 end
 
+#TODO replace objective with a more realistic one
+function obj_relative_noise(model::RandomNoisyNLPModel{T, S, M}, x::S) where {T, S <: (AbstractVector), M}
+  base_value = obj(model.base_model, x)
+  return base_value + abs(base_value) * model.noise_level * (rand(T) - 1 / 2)
+end
+
 # noisy objective with given noise by user (not the one stored in the model)
 function obj(
   model::RandomNoisyNLPModel{T, S, M},
