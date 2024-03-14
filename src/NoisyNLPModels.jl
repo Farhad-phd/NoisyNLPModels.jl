@@ -30,11 +30,6 @@ RandomNoisyNLPModel(model::AbstractNLPModel{T, S}, noise_level) where {T, S} =
 
 # noisy objective
 function obj(model::RandomNoisyNLPModel{T, S, M}, x::S) where {T, S <: (AbstractVector), M}
-  return obj(model.base_model, x) + model.noise_level * (rand(T) - 1 / 2)
-end
-
-#TODO replace objective with a more realistic one
-function obj_relative_noise(model::RandomNoisyNLPModel{T, S, M}, x::S) where {T, S <: (AbstractVector), M}
   base_value = obj(model.base_model, x)
   return base_value + abs(base_value) * model.noise_level * (rand(T) - 1 / 2)
 end
@@ -52,7 +47,7 @@ end
 function grad!(model::RandomNoisyNLPModel{T, S, M}, x::S, g::S) where {T, S <: (AbstractVector), M}
   grad!(model.base_model, x, g)
   for i ∈ eachindex(g)
-    g[i] += model.noise_level * (rand(T) - 1 / 2)
+    g[i] += abs(g[i]) * model.noise_level * (rand(T) - 1 / 2)
   end
   g
 end
