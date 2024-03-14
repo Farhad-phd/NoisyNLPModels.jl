@@ -29,7 +29,7 @@ using ADNLPModels
 
   # Test the obj function
   @testset "obj function" begin
-    @test abs(obj(model, x) - obj_base) <= obj_base * model.noise_level * 1 / 2
+    @test abs(obj(model, x) - obj_base) <= abs(obj_base) * model.noise_level * 1 / 2
     # Test the obj function with a given noise
 
     @test abs(obj(model, x, noise) - obj_base - noise) <= 1e-10
@@ -42,7 +42,7 @@ using ADNLPModels
     grad!(model, x, g)
 
     for i ∈ eachindex(g)
-      @test abs(g[i] - g_base[i]) <= g_base[i] * model.noise_level * 1 / 2
+      @test abs(g[i] - g_base[i]) <= abs(g_base[i]) * model.noise_level * 1 / 2
     end
 
     # Test the grad! function with a given noise
@@ -58,7 +58,7 @@ using ADNLPModels
     g = grad(model, x)
 
     for i ∈ eachindex(g)
-      @test abs(g[i] - g_base[i]) <= g_base[i] * model.noise_level * 1 / 2
+      @test abs(g[i] - g_base[i]) <= abs(g_base[i]) * model.noise_level * 1 / 2
     end
 
     # Test the grad function with a given noise
