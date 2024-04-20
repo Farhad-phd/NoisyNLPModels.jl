@@ -31,6 +31,7 @@ RandomNoisyNLPModel(model::AbstractNLPModel{T, S}, noise_level) where {T, S} =
 # noisy objective
 function obj(model::RandomNoisyNLPModel{T, S, M}, x::S) where {T, S <: (AbstractVector), M}
   base_value = obj(model.base_model, x)
+  increment!(nlp, :neval_obj)
   return base_value + abs(base_value) * model.noise_level * (rand(T) - 1 / 2)
 end
 
@@ -40,12 +41,14 @@ function obj(
   x::S,
   noise::T,
 ) where {T, S <: (AbstractVector), M}
+  increment!(nlp, :neval_obj) #TODO do I need this here or the other obj counter would consider it ?
   return obj(model.base_model, x) + noise
 end
 
 # noisy gradient
 function grad!(model::RandomNoisyNLPModel{T, S, M}, x::S, g::S) where {T, S <: (AbstractVector), M}
   grad!(model.base_model, x, g)
+  increment!(nlp, :neval_grad)
   for i ∈ eachindex(g)
     g[i] += abs(g[i]) * model.noise_level * (rand(T) - 1 / 2)
   end
@@ -60,6 +63,7 @@ function grad!(
   noise::T,
 ) where {T, S <: (AbstractVector), M}
   grad!(model.base_model, x, g)
+  increment!(nlp, :neval_grad) #TODO do i need this?
   for i ∈ eachindex(g)
     g[i] += noise
   end
@@ -72,6 +76,7 @@ function grad(
   noise::T,
 ) where {T, S <: (AbstractVector), M}
   g = grad(model.base_model, x)
+  increment!(nlp, :neval_grad) #TODO do i need this?
   for i ∈ eachindex(g)
     g[i] += noise
   end
